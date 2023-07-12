@@ -1,15 +1,21 @@
 let
-  sources = imports ./nix/sources.nix;
+  pinnedNixpkgs = import ./pinned-nixpkgs.nix;
 
   hello = pkgs.writeShellScriptBin "hello" ''
-    echo "Hello from the Nix channel overlay!"
+    echo "Hello from the Nix channel overlay 😀!"
   '';
 
-  pkgs = import sources.nixpkgs {
-    overlays = [
-      (self: super: {
-        inherit hello;
-      })
-    ];
+  goodbye = pkgs.writeShellScriptBin "goodbye" ''
+    echo "So sad that you must go 😕!"
+  '';
+
+  overlays = [
+    (self: super: {
+      inherit goodbye hello;
+    })
+  ];
+
+  pkgs = pinnedNixpkgs {
+    inherit overlays;
   };
 in pkgs
